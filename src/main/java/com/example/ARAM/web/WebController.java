@@ -10,7 +10,7 @@ public class WebController {
 
 	@RequestMapping("*")
 	public String main() {
-		return "Welcome to the index page. Please try the following endpoint too: /test";
+		return "Welcome to the index page. Please try the following endpoint too: /test, /dbtest, /dbtest/newtest/{var} ";
 	}
 	
 	@RequestMapping("/test")
