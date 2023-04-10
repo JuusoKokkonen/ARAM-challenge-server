@@ -30,6 +30,7 @@ public class TestController {
 	
 	// create a new test object
 	@GetMapping("/newtest/{var}")
+	@CrossOrigin(origins = "http://localhost:3000")
 	public Test addTest(@PathVariable String var) {
 		Test newTest = new Test(var);
 		System.out.println(newTest);
