@@ -1,9 +1,18 @@
 package com.example.ARAM.domain;
 
+import java.io.Serializable;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Champion {
+public class Champion implements Serializable {
+	
+	@Id
+	private String id;
 	
 	private String name;
 	private int wins;
@@ -14,6 +23,7 @@ public class Champion {
 	}
 	
 	Champion(String name) {
+		this.id = name;
 		this.name = name;
 		this.wins = 0;
 		this.losses = 0;
@@ -43,9 +53,17 @@ public class Champion {
 		this.losses = losses;
 	}
 
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	@Override
 	public String toString() {
-		return "Champion [name=" + name + ", wins=" + wins + ", losses=" + losses + "]";
+		return "Champion [id=" + id + ", name=" + name + ", wins=" + wins + ", losses=" + losses + "]";
 	}
 	
 	
