@@ -21,8 +21,6 @@ import com.example.ARAM.domain.Challenge;
 import com.example.ARAM.domain.ChallengeRepository;
 import com.example.ARAM.domain.ChampionList;
 import com.example.ARAM.domain.ChampionListRepository;
-import com.example.ARAM.domain.Test;
-import com.example.ARAM.domain.TestRepository;
 import com.example.ARAM.domain.User;
 
 @org.springframework.web.bind.annotation.RestController
@@ -33,20 +31,11 @@ public class RestController {
     private String apiKey;
 	
 	@Autowired
-	private TestRepository testRepository;
-	
-	@Autowired
 	private ChallengeRepository challengeRepository;
 	
 	@Autowired
 	private ChampionListRepository championListRepository;
 	
-	// Return all tests from database as json
-	@GetMapping
-	@CrossOrigin(origins = "http://localhost:3000")
-	private ResponseEntity<?> getAllTests() {
-		return ResponseEntity.ok(this.testRepository.findAll());
-	}
 	
 	// Return all champion lists from database as json
 	@GetMapping(value = "/championlists")
@@ -63,34 +52,18 @@ public class RestController {
 	}
 		
 	// Return challenge by "uuid" (challengelist code)
-	@GetMapping(value = "/challenge/{uid}")
-	private ResponseEntity<?> getChallengeById(@PathVariable String uid) {
-		return ResponseEntity.ok(this.challengeRepository.findById(uid));
+	@GetMapping(value = "/challenge/{uuid}")
+	private ResponseEntity<?> getChallengeById(@PathVariable String uuid) {
+		return ResponseEntity.ok(this.challengeRepository.findById(uuid));
 	}
-	
-	// Create a new test object
-	@GetMapping("/newtest/{var}")
-	@CrossOrigin(origins = "http://localhost:3000")
-	public Test addTest(@PathVariable String var) {
-		Test newTest = new Test(var);
-		System.out.println(newTest);
-		return testRepository.save(newTest);
-
-	}	
-	
-	// Get Champion list
+		
+	// Create new ChampionList with data from RiotGames api
 	@GetMapping(value = "/champions")
 	public ChampionList getChampions() {
 		String uri = "http://ddragon.leagueoflegends.com/cdn/13.7.1/data/en_US/champion.json";
 		RestTemplate restTemplate = new RestTemplate();
 		ChampionList newChampionList = restTemplate.getForObject(uri, ChampionList.class);
 		championListRepository.save(newChampionList);
-//		String jsonResponse = restTemplate.getForObject(uri, String.class);
-//		ArrayList<Champion> champs = new ArrayList<Champion>();
-//		newChampionList.setId((long) 2);
-//		Challenge challenge = new Challenge("ambaal", newChampionList);
-//		challengeRepository.save(challenge);
-//		championListRepository.save(newChampionList);
 		return newChampionList;
 		
 	}
@@ -106,8 +79,8 @@ public class RestController {
 	
 	// Create a new challenge
 	@GetMapping(value = "/newchallenge/{username}")
-	public Challenge createChallenge() {
-		User user = getUserByUsername("spili");
+	public Challenge createChallenge(@PathVariable String username) {
+		User user = getUserByUsername(username);
 		ChampionList championList = getChampions();
 		Challenge challenge = new Challenge(user, championList);
 		challengeRepository.save(challenge);
