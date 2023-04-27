@@ -12,9 +12,9 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "challenges")
 public class Challenge {
-	
+
 	@Id
-	private String uuid;
+	private String challenge_id;
 	
 	private String username;
 	private String user_puuid;
@@ -26,7 +26,7 @@ public class Challenge {
 	private ChampionList championlist;
 	
 	public Challenge(User user, ChampionList championListId) {
-		this.uuid = UUID.randomUUID().toString();
+		this.challenge_id = UUID.randomUUID().toString();
 		this.username = user.getName();
 		this.user_puuid = user.getPuuid();
 		this.startDate = (long)System.currentTimeMillis();
@@ -38,12 +38,12 @@ public class Challenge {
 		super();
 	}
 
-	public String getUuid() {
-		return uuid;
+	public String getChallenge_id() {
+		return challenge_id;
 	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
+	
+	public void setChallenge_id(String challenge_id) {
+		this.challenge_id = challenge_id;
 	}
 
 	public String getUsername() {
@@ -88,9 +88,10 @@ public class Challenge {
 
 	@Override
 	public String toString() {
-		return "Challenge [uuid=" + uuid + ", username=" + username + ", user_puuid=" + user_puuid + ", startDate="
+		return "Challenge [uuid=" + challenge_id + ", username=" + username + ", user_puuid=" + user_puuid + ", startDate="
 				+ startDate + ", lastRefresh=" + lastRefresh + ", championlist=" + championlist + "]";
 	}
+
 
 	
 	
