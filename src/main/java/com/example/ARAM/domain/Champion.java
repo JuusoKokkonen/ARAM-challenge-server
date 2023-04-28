@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Champion implements Serializable {
-	private static final long serialVersionUID = 1113799434508676095L;
+	private static final long serialVersionUID = 123;
 	@Id
 	private String id;
 	

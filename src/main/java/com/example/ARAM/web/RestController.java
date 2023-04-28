@@ -59,6 +59,7 @@ public class RestController {
 		
 	// Return challenge by "uuid" (challengelist code)
 	@GetMapping(value = "/challenge/{uuid}")
+	@CrossOrigin(origins = "http://localhost:3000")
 	private ResponseEntity<?> getChallengeById(@PathVariable String uuid) {
 		return ResponseEntity.ok(this.challengeRepository.findById(uuid));
 	}
@@ -75,6 +76,7 @@ public class RestController {
 	
 	// Get user data by username
 	@GetMapping(value = "/user/{username}")
+	@CrossOrigin(origins = "http://localhost:3000")
 	public User getUserByUsername(@PathVariable String username) {
 		String uri = "https://eun1.api.riotgames.com/lol/summoner/v4/summoners/by-name/"+ username + "?api_key=" + apiKey;
 		RestTemplate restTemplate = new RestTemplate();
@@ -84,6 +86,7 @@ public class RestController {
 	
 	// Create a new challenge
 	@GetMapping(value = "/newchallenge/{username}")
+	@CrossOrigin(origins = "http://localhost:3000")
 	public Challenge createChallenge(@PathVariable String username) {
 		User user = getUserByUsername(username);
 		ChampionList championList = getChampions();
@@ -92,10 +95,10 @@ public class RestController {
 		return challenge;
 	}
 	
-	// Get user match data by user puuid
-	// RENAME TEST
+	// Refreshes given challenge and adds wins and losses to the champions
 	// set match count right
 	@GetMapping(value = "/matches/{challenge_id}")
+	@CrossOrigin(origins = "http://localhost:3000")
 	public HashMap<String, Champion> getMatches(@PathVariable String challenge_id) {
 		Challenge challenge = challengeRepository.getById(challenge_id);
 		String uri = "https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/" + challenge.getUser_puuid() + "/ids?queue=450&start" + challenge.getLastRefresh() + "&count=20&api_key=" + apiKey;
@@ -104,11 +107,21 @@ public class RestController {
 		// Create a HashMap for easier data access
 		HashMap<String, Champion> mapChampions = new HashMap<String, Champion>();
 		for (Champion champion : championList.getList()) {
+			
+			// Handle Nunu
+			if (champion.getName().equals("Nunu & Willump")) {
+				champion.setName("Nunu");
+				System.out.println("Handled Nunu exception");
+			}
+			
+			// Removing spaces from champion names
 			if(champion.getName().contains(" ")) {
 				String newName1 = champion.getName().replace(" ", "");
 				System.out.println("Set: " + champion.getName() + " to " + newName1);
 				champion.setName(newName1);
 			}
+			
+			// Removing " ' " from champion names
 			if(champion.getName().contains("'")) {
 				String newName1 = champion.getName().replace("'", "").toLowerCase();
 				System.out.println("Set: " + champion.getName() + " to " + newName1);
@@ -117,51 +130,47 @@ public class RestController {
 				champion.setName(newName2);
 			}
 			
+			// Handle Kog'Maw
 			if (champion.getName().equals("Kogmaw")) {
 				champion.setName("KogMaw");
 				System.out.println("Handled KogMaw exception");
 			}
 			
-			if (champion.getName().equals("Nunu & Willump")) {
-				champion.setName("Nunu");
-				System.out.println("Handled Nunu exception");
-			}
 			mapChampions.put(champion.getName(), champion);
 		}
 
 		// HANDLE WINS AND LOSSES
-		ArrayList<Champion> augh = championList.getList();
+		ArrayList<Champion> championArray = championList.getList();
 		RestTemplate restTemplate = new RestTemplate();
-		List<String> test = restTemplate.getForObject(uri, List.class);
-		List<MatchData> kekw = parseMatch(test.get(0), challenge.getUsername(), test);
+		List<String> matchIdList = restTemplate.getForObject(uri, List.class);
+		List<MatchData> gameData = getGameData(matchIdList.get(0), challenge.getUsername(), matchIdList);
 		Champion currentChampion;
 		
-		for (MatchData entry : kekw) {
+		for (MatchData entry : gameData) {
 			System.out.println(entry.getChampion());
 			currentChampion = mapChampions.get(entry.getChampion());
 			currentChampion.handleMatch(entry);
 		
 		}
-		championList.setList(augh);
+		championList.setList(championArray);
 		championListRepository.save(championList);
 		return mapChampions;
 	}
 	
-	// Parse individual match data into challenge object
+	// Returns a list of MatchData objects
 	@GetMapping(value = "/parsematch/{matchId}/{user}")
-	public List<MatchData> parseMatch(String matchId, String user, List<String> matchList) {
+	public List<MatchData> getGameData(String matchId, String user, List<String> matchList) {
 		String uri = "https://europe.api.riotgames.com/lol/match/v5/matches/" + matchId + "?api_key=" + apiKey;
 		RestTemplate restTemplate = new RestTemplate();
-		
 		List<MatchData> response = new ArrayList<MatchData>();
 		
 		for (String entry : matchList) {
 			uri = "https://europe.api.riotgames.com/lol/match/v5/matches/" + entry + "?api_key=" + apiKey;
 			Match gameData = restTemplate.getForObject(uri, Match.class);
 			gameData.setUser(user);
-			for (MatchData lulw : gameData.getList()) {
-				if (lulw.getUsername().toLowerCase().equals(user.toLowerCase())) {
-					response.add(lulw);
+			for (MatchData match : gameData.getList()) {
+				if (match.getUsername().toLowerCase().equals(user.toLowerCase())) {
+					response.add(match);
 				}
 			}
 
