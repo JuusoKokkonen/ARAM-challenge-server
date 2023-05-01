@@ -10,12 +10,15 @@ public class WebController {
 
 	@RequestMapping("*")
 	public String main() {
-		return "Welcome to the index page. Please try the following endpoint too: /test, /dbtest, /dbtest/newtest/{var} ";
-	}
-	
-	@RequestMapping("/test")
-	public String test() {
-		return "Hyvin toimii :D:D:D:D:DDDDD";
+		String apiGuide = "Welcome to the index page. Avaliable api endpoints: "
+				+ "api/challenge/{challenge_id}, "
+				+ "api/user/{username}, "
+				+ "api/newchallenge/{username}, "
+				+ "api/refreshchallenge/{challenge_id}, "
+				+ "api/champions, "
+				+ "api/challengelists, "
+				+ "api/championlists";
+		return apiGuide;
 	}
 	
 	

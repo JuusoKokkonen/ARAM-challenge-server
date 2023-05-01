@@ -57,15 +57,16 @@ public class RestController {
 		return ResponseEntity.ok(this.challengeRepository.findAll());
 	}
 		
-	// Return challenge by "uuid" (challengelist code)
-	@GetMapping(value = "/challenge/{uuid}")
+	// Return challenge by "challenge_id"
+	@GetMapping(value = "/challenge/{challenge_id}")
 	@CrossOrigin(origins = "http://localhost:3000")
-	private ResponseEntity<?> getChallengeById(@PathVariable String uuid) {
-		return ResponseEntity.ok(this.challengeRepository.findById(uuid));
+	private ResponseEntity<?> getChallengeById(@PathVariable String challenge_id) {
+		return ResponseEntity.ok(this.challengeRepository.findById(challenge_id));
 	}
 		
 	// Create new ChampionList with data from RiotGames api
 	@GetMapping(value = "/champions")
+	@CrossOrigin(origins = "http://localhost:3000")
 	public ChampionList getChampions() {
 		String uri = "http://ddragon.leagueoflegends.com/cdn/13.7.1/data/en_US/champion.json";
 		RestTemplate restTemplate = new RestTemplate();
@@ -97,7 +98,7 @@ public class RestController {
 	
 	// Refreshes given challenge and adds wins and losses to the champions
 	// set match count right
-	@GetMapping(value = "/matches/{challenge_id}")
+	@GetMapping(value = "/refreshchallenge/{challenge_id}")
 	@CrossOrigin(origins = "http://localhost:3000")
 	public HashMap<String, Champion> getMatches(@PathVariable String challenge_id) {
 		Challenge challenge = challengeRepository.getById(challenge_id);
@@ -158,7 +159,6 @@ public class RestController {
 	}
 	
 	// Returns a list of MatchData objects
-	@GetMapping(value = "/parsematch/{matchId}/{user}")
 	public List<MatchData> getGameData(String matchId, String user, List<String> matchList) {
 		String uri = "https://europe.api.riotgames.com/lol/match/v5/matches/" + matchId + "?api_key=" + apiKey;
 		RestTemplate restTemplate = new RestTemplate();
