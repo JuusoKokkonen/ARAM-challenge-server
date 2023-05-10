@@ -29,12 +29,16 @@ public class Champion implements Serializable {
 		this.losses = 0;
 	}
 
-	public void handleMatch(MatchData matchData) {
+	public void handleMatch(MatchData matchData, Challenge challenge) {
 		if (matchData.isWin() == true) {
 			this.wins = (this.wins+1);
+			challenge.setTotalGames(challenge.getTotalGames()+1);
+			challenge.setTotalWins(challenge.getTotalWins()+1);
 			System.out.println("Added a win for: " + matchData.getChampion());
 		} else {
 			this.losses = (this.losses+1);
+			challenge.setTotalGames(challenge.getTotalGames()+1);
+			challenge.setTotalLosses(challenge.getTotalLosses()+1);
 			System.out.println("Added a loss for: " + matchData.getChampion());
 		}
 	}

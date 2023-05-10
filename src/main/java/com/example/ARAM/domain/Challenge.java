@@ -9,7 +9,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "challenges")
 public class Challenge {
 
@@ -18,6 +21,9 @@ public class Challenge {
 	
 	private String username;
 	private String user_puuid;
+	private Long totalGames;
+	private Long totalWins;
+	private Long totalLosses;
 	private Long startDate;
 	private Long lastRefresh;
 	
@@ -29,6 +35,9 @@ public class Challenge {
 		this.challenge_id = UUID.randomUUID().toString();
 		this.username = user.getName();
 		this.user_puuid = user.getPuuid();
+		this.totalGames = (long) 0;
+		this.totalWins = (long) 0;
+		this.totalLosses = (long) 0;
 		this.startDate = (long)System.currentTimeMillis();
 		this.lastRefresh = (long)System.currentTimeMillis();
 		this.championlist = championListId;
@@ -41,7 +50,7 @@ public class Challenge {
 	public String getChallenge_id() {
 		return challenge_id;
 	}
-	
+
 	public void setChallenge_id(String challenge_id) {
 		this.challenge_id = challenge_id;
 	}
@@ -52,6 +61,38 @@ public class Challenge {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public String getUser_puuid() {
+		return user_puuid;
+	}
+
+	public void setUser_puuid(String user_puuid) {
+		this.user_puuid = user_puuid;
+	}
+
+	public Long getTotalGames() {
+		return totalGames;
+	}
+
+	public void setTotalGames(Long totalGames) {
+		this.totalGames = totalGames;
+	}
+
+	public Long getTotalWins() {
+		return totalWins;
+	}
+
+	public void setTotalWins(Long totalWins) {
+		this.totalWins = totalWins;
+	}
+
+	public Long getTotalLosses() {
+		return totalLosses;
+	}
+
+	public void setTotalLosses(Long totalLosses) {
+		this.totalLosses = totalLosses;
 	}
 
 	public Long getStartDate() {
@@ -78,19 +119,15 @@ public class Challenge {
 		this.championlist = championlist;
 	}
 
-	public String getUser_puuid() {
-		return user_puuid;
-	}
-
-	public void setUser_puuid(String user_puuid) {
-		this.user_puuid = user_puuid;
-	}
-
 	@Override
 	public String toString() {
-		return "Challenge [uuid=" + challenge_id + ", username=" + username + ", user_puuid=" + user_puuid + ", startDate="
-				+ startDate + ", lastRefresh=" + lastRefresh + ", championlist=" + championlist + "]";
+		return "Challenge [challenge_id=" + challenge_id + ", username=" + username + ", user_puuid=" + user_puuid
+				+ ", totalGames=" + totalGames + ", totalWins=" + totalWins + ", totalLosses=" + totalLosses
+				+ ", startDate=" + startDate + ", lastRefresh=" + lastRefresh + ", championlist=" + championlist + "]";
 	}
+
+	
+	
 
 
 	

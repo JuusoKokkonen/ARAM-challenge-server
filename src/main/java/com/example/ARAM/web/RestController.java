@@ -71,6 +71,46 @@ public class RestController {
 		String uri = "http://ddragon.leagueoflegends.com/cdn/13.7.1/data/en_US/champion.json";
 		RestTemplate restTemplate = new RestTemplate();
 		ChampionList newChampionList = restTemplate.getForObject(uri, ChampionList.class);
+		
+		// Due to inconsistencies in Riot Games api output some champion names need to be modified
+		for (Champion champion : newChampionList.getList()) {
+			
+			// Handle Nunu
+			if (champion.getName().equals("Nunu & Willump")) {
+				champion.setName("Nunu");
+				System.out.println("Handled Nunu exception");
+			}
+			
+			// Handle Dr.Mundo
+			if (champion.getName().equals("Dr. Mundo")) {
+				champion.setName("DrMundo");
+				System.out.println("Handled Dr.Mundo exception");
+			}
+			
+			// Removing spaces from champion names
+			if(champion.getName().contains(" ")) {
+				String newName = champion.getName().replace(" ", "");
+				System.out.println("Set: " + champion.getName() + " to " + newName);
+				champion.setName(newName);
+			}
+			
+			// Removing " ' " from champion names
+			if(champion.getName().contains("'")) {
+				String newName1 = champion.getName().replace("'", "").toLowerCase();
+				System.out.println("Set: " + champion.getName() + " to " + newName1);
+				String newName2 = newName1.substring(0,1).toUpperCase() + newName1.substring(1);
+				System.out.println("Set: " + newName1 + " to " + newName2);
+				champion.setName(newName2);
+			}
+			
+			// Handle Kog'Maw
+			if (champion.getName().equals("Kogmaw")) {
+				champion.setName("KogMaw");
+				System.out.println("Handled KogMaw exception");
+			}
+			
+		}
+		
 		championListRepository.save(newChampionList);
 		return newChampionList;
 	}
@@ -100,43 +140,14 @@ public class RestController {
 	// set match count right
 	@GetMapping(value = "/refreshchallenge/{challenge_id}")
 	@CrossOrigin(origins = "http://localhost:3000")
-	public HashMap<String, Champion> getMatches(@PathVariable String challenge_id) {
+	public Challenge refreshChallenge(@PathVariable String challenge_id) {
 		Challenge challenge = challengeRepository.getById(challenge_id);
 		String uri = "https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/" + challenge.getUser_puuid() + "/ids?queue=450&start" + challenge.getLastRefresh() + "&count=20&api_key=" + apiKey;
 		ChampionList championList = challenge.getChampionlist();
 		
 		// Create a HashMap for easier data access
 		HashMap<String, Champion> mapChampions = new HashMap<String, Champion>();
-		for (Champion champion : championList.getList()) {
-			
-			// Handle Nunu
-			if (champion.getName().equals("Nunu & Willump")) {
-				champion.setName("Nunu");
-				System.out.println("Handled Nunu exception");
-			}
-			
-			// Removing spaces from champion names
-			if(champion.getName().contains(" ")) {
-				String newName1 = champion.getName().replace(" ", "");
-				System.out.println("Set: " + champion.getName() + " to " + newName1);
-				champion.setName(newName1);
-			}
-			
-			// Removing " ' " from champion names
-			if(champion.getName().contains("'")) {
-				String newName1 = champion.getName().replace("'", "").toLowerCase();
-				System.out.println("Set: " + champion.getName() + " to " + newName1);
-				String newName2 = newName1.substring(0,1).toUpperCase() + newName1.substring(1);
-				System.out.println("Set: " + newName1 + " to " + newName2);
-				champion.setName(newName2);
-			}
-			
-			// Handle Kog'Maw
-			if (champion.getName().equals("Kogmaw")) {
-				champion.setName("KogMaw");
-				System.out.println("Handled KogMaw exception");
-			}
-			
+		for(Champion champion : championList.getList()) {
 			mapChampions.put(champion.getName(), champion);
 		}
 
@@ -144,23 +155,22 @@ public class RestController {
 		ArrayList<Champion> championArray = championList.getList();
 		RestTemplate restTemplate = new RestTemplate();
 		List<String> matchIdList = restTemplate.getForObject(uri, List.class);
-		List<MatchData> gameData = getGameData(matchIdList.get(0), challenge.getUsername(), matchIdList);
+		List<MatchData> gameData = getGameData(challenge.getUsername(), matchIdList);
 		Champion currentChampion;
 		
 		for (MatchData entry : gameData) {
-			System.out.println(entry.getChampion());
 			currentChampion = mapChampions.get(entry.getChampion());
-			currentChampion.handleMatch(entry);
+			currentChampion.handleMatch(entry, challenge);
 		
 		}
 		championList.setList(championArray);
 		championListRepository.save(championList);
-		return mapChampions;
+		return challenge;
 	}
 	
 	// Returns a list of MatchData objects
-	public List<MatchData> getGameData(String matchId, String user, List<String> matchList) {
-		String uri = "https://europe.api.riotgames.com/lol/match/v5/matches/" + matchId + "?api_key=" + apiKey;
+	public List<MatchData> getGameData(String user, List<String> matchList) {
+		String uri;
 		RestTemplate restTemplate = new RestTemplate();
 		List<MatchData> response = new ArrayList<MatchData>();
 		
