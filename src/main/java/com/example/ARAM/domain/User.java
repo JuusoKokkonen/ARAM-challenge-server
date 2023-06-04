@@ -1,7 +1,5 @@
 package com.example.ARAM.domain;
 
-import javax.persistence.Entity;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class User {
@@ -54,9 +52,5 @@ public class User {
 	public String toString() {
 		return "User [id=" + id + ", puuid=" + puuid + ", name=" + name + ", summonerLevel=" + summonerLevel + "]";
 	}
-
-
-
-	
 
 }

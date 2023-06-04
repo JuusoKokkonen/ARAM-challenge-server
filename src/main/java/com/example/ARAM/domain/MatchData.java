@@ -1,18 +1,18 @@
 package com.example.ARAM.domain;
 
 public class MatchData {
-	
+
 	private String username;
 	private String champion;
 	private boolean win;
-	
+
 	public MatchData(String username, String champion, boolean win) {
 		super();
 		this.username = username;
 		this.champion = champion;
 		this.win = win;
 	}
-	
+
 	public MatchData() {
 		super();
 	}
@@ -45,10 +45,5 @@ public class MatchData {
 	public String toString() {
 		return "MatchData [username=" + username + ", champion=" + champion + ", win=" + win + "]";
 	}
-	
-	
-	
-	
-	
-	
+
 }

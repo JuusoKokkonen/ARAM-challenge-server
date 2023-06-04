@@ -13,15 +13,15 @@ public class Champion implements Serializable {
 	private static final long serialVersionUID = 123;
 	@Id
 	private String id;
-	
+
 	private String name;
 	private int wins;
 	private int losses;
-	 
+
 	Champion() {
 		super();
 	}
-	
+
 	Champion(String name) {
 		this.id = name;
 		this.name = name;
@@ -31,18 +31,18 @@ public class Champion implements Serializable {
 
 	public void handleMatch(MatchData matchData, Challenge challenge) {
 		if (matchData.isWin() == true) {
-			this.wins = (this.wins+1);
-			challenge.setTotalGames(challenge.getTotalGames()+1);
-			challenge.setTotalWins(challenge.getTotalWins()+1);
+			this.wins = (this.wins + 1);
+			challenge.setTotalGames(challenge.getTotalGames() + 1);
+			challenge.setTotalWins(challenge.getTotalWins() + 1);
 			System.out.println("Added a win for: " + matchData.getChampion());
 		} else {
-			this.losses = (this.losses+1);
-			challenge.setTotalGames(challenge.getTotalGames()+1);
-			challenge.setTotalLosses(challenge.getTotalLosses()+1);
+			this.losses = (this.losses + 1);
+			challenge.setTotalGames(challenge.getTotalGames() + 1);
+			challenge.setTotalLosses(challenge.getTotalLosses() + 1);
 			System.out.println("Added a loss for: " + matchData.getChampion());
 		}
 	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -79,12 +79,5 @@ public class Champion implements Serializable {
 	public String toString() {
 		return "Champion [id=" + id + ", name=" + name + ", wins=" + wins + ", losses=" + losses + "]";
 	}
-	
-	
-	
-	
+
 }
-
-	
-	
-

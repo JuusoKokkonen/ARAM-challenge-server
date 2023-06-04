@@ -1,5 +1,6 @@
 package com.example.ARAM.domain;
 
+import java.time.Instant;
 import java.util.UUID;
 
 import javax.persistence.CascadeType;
@@ -12,13 +13,13 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 @Table(name = "challenges")
 public class Challenge {
 
 	@Id
 	private String challenge_id;
-	
+
 	private String username;
 	private String user_puuid;
 	private Long totalGames;
@@ -26,11 +27,11 @@ public class Challenge {
 	private Long totalLosses;
 	private Long startDate;
 	private Long lastRefresh;
-	
+
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "championlistId", referencedColumnName = "id")
 	private ChampionList championlist;
-	
+
 	public Challenge(User user, ChampionList championListId) {
 		this.challenge_id = UUID.randomUUID().toString();
 		this.username = user.getName();
@@ -38,11 +39,11 @@ public class Challenge {
 		this.totalGames = (long) 0;
 		this.totalWins = (long) 0;
 		this.totalLosses = (long) 0;
-		this.startDate = (long)System.currentTimeMillis();
-		this.lastRefresh = (long)System.currentTimeMillis();
+		this.startDate = (long) Instant.now().getEpochSecond();
+		this.lastRefresh = (long) Instant.now().getEpochSecond();
 		this.championlist = championListId;
 	}
-	
+
 	public Challenge() {
 		super();
 	}
@@ -125,13 +126,5 @@ public class Challenge {
 				+ ", totalGames=" + totalGames + ", totalWins=" + totalWins + ", totalLosses=" + totalLosses
 				+ ", startDate=" + startDate + ", lastRefresh=" + lastRefresh + ", championlist=" + championlist + "]";
 	}
-
-	
-	
-
-
-	
-	
-	
 
 }

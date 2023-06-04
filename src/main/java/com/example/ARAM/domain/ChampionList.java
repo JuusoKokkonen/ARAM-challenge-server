@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 public class ChampionList {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -22,24 +22,23 @@ public class ChampionList {
 	public ChampionList(ArrayList<Champion> list) {
 		this.list = list;
 	}
-	
+
 	public ChampionList() {
 		super();
 	}
-	
+
 	@JsonProperty("data")
 	@SuppressWarnings("unchecked")
-    private void mapData(Map<String, Object> data) {
+	private void mapData(Map<String, Object> data) {
 		List<Champion> list = new ArrayList<Champion>();
-		for(String key : data.keySet()) {
-			String championName = ((Map<String,String>)data.get(key)).get("name");
+		for (String key : data.keySet()) {
+			String championName = ((Map<String, String>) data.get(key)).get("name");
 			Champion newChampion = new Champion(championName);
 			list.add(newChampion);
 		}
 		this.list = (ArrayList<Champion>) list;
-    }
+	}
 
-	
 	public Long getId() {
 		return id;
 	}
@@ -55,13 +54,10 @@ public class ChampionList {
 	public void setList(ArrayList<Champion> list) {
 		this.list = list;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "ChampionList [id=" + id + ", list=" + list + "]";
 	}
-	
-	
+
 }
-
-

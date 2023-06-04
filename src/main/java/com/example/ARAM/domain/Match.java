@@ -27,7 +27,7 @@ public class Match {
 		}
 		this.list = (ArrayList<MatchData>) list;
 
-    }
+	}
 
 	public ArrayList<MatchData> getList() {
 		return list;
@@ -40,7 +40,7 @@ public class Match {
 	public String getUser() {
 		return user;
 	}
-	
+
 	public void setUser(String user) {
 		this.user = user;
 	}
@@ -49,10 +49,5 @@ public class Match {
 	public String toString() {
 		return "Match [user=" + user + ", list=" + list + "]";
 	}
-	
-	
 
-
-
-	
 }
