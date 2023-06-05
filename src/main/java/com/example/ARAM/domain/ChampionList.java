@@ -39,6 +39,7 @@ public class ChampionList {
 		this.list = (ArrayList<Champion>) list;
 	}
 
+	// Getters & Setters
 	public Long getId() {
 		return id;
 	}

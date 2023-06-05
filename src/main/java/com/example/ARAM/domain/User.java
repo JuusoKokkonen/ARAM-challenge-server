@@ -16,6 +16,7 @@ public class User {
 	@JsonProperty("summonerLevel")
 	public Long summonerLevel;
 
+	//Getters & Setters
 	public String getId() {
 		return id;
 	}

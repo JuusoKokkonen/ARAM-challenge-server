@@ -11,9 +11,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Champion implements Serializable {
 	private static final long serialVersionUID = 123;
+	
 	@Id
 	private String id;
-
+	
 	private String name;
 	private int wins;
 	private int losses;
@@ -29,6 +30,7 @@ public class Champion implements Serializable {
 		this.losses = 0;
 	}
 
+	// Adds wins and losses to challenge object from matchData object
 	public void handleMatch(MatchData matchData, Challenge challenge) {
 		if (matchData.isWin() == true) {
 			this.wins = (this.wins + 1);
@@ -43,6 +45,7 @@ public class Champion implements Serializable {
 		}
 	}
 
+	// Getters & Setters
 	public String getName() {
 		return name;
 	}
