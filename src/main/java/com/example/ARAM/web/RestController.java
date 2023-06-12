@@ -52,14 +52,14 @@ public class RestController {
 
 	// Return challenge by "challenge_id"
 	@GetMapping(value = "/challenge/{challenge_id}")
-	@CrossOrigin(origins = "http://localhost:3000")
+	@CrossOrigin(origins = "*")
 	private ResponseEntity<?> getChallengeById(@PathVariable String challenge_id) {
 		return ResponseEntity.ok(this.challengeRepository.findById(challenge_id));
 	}
 
 	// Create new ChampionList with data from RiotGames api
 	@GetMapping(value = "/champions")
-	@CrossOrigin(origins = "http://localhost:3000")
+	@CrossOrigin(origins = "*")
 	public ChampionList getChampions() {
 		String uri = "http://ddragon.leagueoflegends.com/cdn/13.7.1/data/en_US/champion.json";
 		RestTemplate restTemplate = new RestTemplate();
@@ -110,7 +110,7 @@ public class RestController {
 
 	// Get user data by username
 	@GetMapping(value = "/user/{username}")
-	@CrossOrigin(origins = "http://localhost:3000")
+	@CrossOrigin(origins = "*")
 	public User getUserByUsername(@PathVariable String username) {
 		String uri = "https://eun1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" + username + "?api_key=" + apiKey;
 		RestTemplate restTemplate = new RestTemplate();
@@ -125,7 +125,7 @@ public class RestController {
 
 	// Create a new challenge
 	@GetMapping(value = "/newchallenge/{username}")
-	@CrossOrigin(origins = "http://localhost:3000")
+	@CrossOrigin(origins = "*")
 	public Challenge createChallenge(@PathVariable String username) {
 		User user = getUserByUsername(username);
 		ChampionList championList = getChampions();
@@ -144,9 +144,11 @@ public class RestController {
 	}
 
 	// Refreshes given challenge and adds wins and losses to the champions
-	// set match count right
+	// For testing: "https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/" + challenge.getUser_puuid() + "/ids?" + "&queue=450&start=0&count=25&api_key=" + apiKey;
+	// For prod: "https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/" + challenge.getUser_puuid() + "/ids?startTime=" + challenge.getLastRefresh() + "&queue=450&start=0&count=25&api_key=" + apiKey;
 	@GetMapping(value = "/refreshchallenge/{challenge_id}")
-	@CrossOrigin(origins = "http://localhost:3000")
+	// "http://localhost:3000"
+	@CrossOrigin(origins = "*")
 	public Challenge refreshChallenge(@PathVariable String challenge_id) {
 		Challenge challenge = challengeRepository.getById(challenge_id);	
 		String uri = "https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/" + challenge.getUser_puuid() + "/ids?startTime=" + challenge.getLastRefresh() + "&queue=450&start=0&count=25&api_key=" + apiKey;
@@ -157,7 +159,7 @@ public class RestController {
 		// Create a HashMap for easier data access
 		HashMap<String, Champion> mapChampions = new HashMap<String, Champion>();
 		for (Champion champion : championList.getList()) {
-			mapChampions.put(champion.getName(), champion);
+			mapChampions.put(champion.getName().toLowerCase(), champion);
 		}
 
 		// Handle wins and losses
@@ -168,13 +170,12 @@ public class RestController {
 		Champion currentChampion;
 
 		for (MatchData entry : gameData) {
-			currentChampion = mapChampions.get(entry.getChampion());
+			currentChampion = mapChampions.get(entry.getChampion().toLowerCase());
 			currentChampion.handleMatch(entry, challenge);
 
 		}
 		championList.setList(championArray);
 		challenge.setLastRefresh((long) Instant.now().getEpochSecond());
-		System.out.println(challenge.getLastRefresh());
 		championListRepository.save(championList);
 		challengeRepository.save(challenge);
 		return challenge;
@@ -192,6 +193,10 @@ public class RestController {
 			gameData.setUser(user);
 			for (MatchData match : gameData.getList()) {
 				if (match.getUsername().toLowerCase().equals(user.toLowerCase())) {
+					// Change "MonkeyKing" to "Wukong"
+					if (match.getChampion().equals("MonkeyKing")) {
+						match.setChampion("Wukong");
+					}
 					response.add(match);
 				}
 			}

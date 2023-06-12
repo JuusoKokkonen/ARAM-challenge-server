@@ -29,7 +29,7 @@ public class Match {
 
 	}
 
-//Getters & Setters
+	//Getters & Setters
 	public ArrayList<MatchData> getList() {
 		return list;
 	}

@@ -48,6 +48,7 @@ public class Challenge {
 		super();
 	}
 
+	// Getters & Setters
 	public String getChallenge_id() {
 		return challenge_id;
 	}

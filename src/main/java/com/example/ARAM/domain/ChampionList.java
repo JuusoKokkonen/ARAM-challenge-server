@@ -27,6 +27,7 @@ public class ChampionList {
 		super();
 	}
 
+	// Filters out all unnecessary data from Riot Games API's champion list
 	@JsonProperty("data")
 	@SuppressWarnings("unchecked")
 	private void mapData(Map<String, Object> data) {

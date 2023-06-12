@@ -12,11 +12,12 @@ public class MatchData {
 		this.champion = champion;
 		this.win = win;
 	}
-
+	
 	public MatchData() {
 		super();
 	}
-
+	
+	//Getters & Setters
 	public String getUsername() {
 		return username;
 	}
